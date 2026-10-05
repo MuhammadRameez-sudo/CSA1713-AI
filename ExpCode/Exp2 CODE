@@ -1,0 +1,68 @@
+def solve_n_queens(n=8):
+    """
+    Solves the N-Queens problem using backtracking.
+    Returns a list of all distinct valid board configurations.
+    """
+    solutions = []
+    # cols: track occupied columns
+    # diag1: track occupied main diagonals (row - col is constant)
+    # diag2: track occupied anti-diagonals (row + col is constant)
+    cols = set()
+    diag1 = set()
+    diag2 = set()
+
+    # board[row] stores the column index of the queen in that row
+    board = [-1] * n
+
+    def backtrack(row):
+        # Base case: All n queens are placed successfully
+        if row == n:
+            solutions.append(list(board))
+            return
+
+        for col in range(n):
+            d1 = row - col
+            d2 = row + col
+
+            # Check if placing a queen here causes an attack
+            if col in cols or d1 in diag1 or d2 in diag2:
+                continue
+
+            # Place queen and mark restrictions
+            board[row] = col
+            cols.add(col)
+            diag1.add(d1)
+            diag2.add(d2)
+
+            # Recurse to place queen in the next row
+            backtrack(row + 1)
+
+            # Backtrack (undo move)
+            board[row] = -1
+            cols.remove(col)
+            diag1.remove(d1)
+            diag2.remove(d2)
+
+    backtrack(0)
+    return solutions
+
+
+def print_board(solution):
+    n = len(solution)
+    for row in range(n):
+        line = ["Q" if col == solution[row] else "." for col in range(n)]
+        print(" ".join(line))
+    print()
+
+
+# ---------------- Example Usage ----------------
+if __name__ == "__main__":
+    N = 8
+    all_solutions = solve_n_queens(N)
+
+    print(f"Total distinct solutions found for {N}-Queens: {len(all_solutions)}\n")
+
+    # Display the first solution as an example
+    print("Example Solution (Solution 1):")
+    print_board(all_solutions[0])
+    print(f"Queen column positions per row (0 to {N-1}): {all_solutions[0]}")
