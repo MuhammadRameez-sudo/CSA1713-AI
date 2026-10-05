@@ -1,0 +1,138 @@
+import heapq
+
+# Target solved configuration (0 represents the blank space)
+GOAL_STATE = (
+    (1, 2, 3),
+    (4, 5, 6),
+    (7, 8, 0)
+)
+
+# Precompute goal positions (r, c) for each number 1-8 to speed up heuristic calculation
+GOAL_POS = {}
+for r in range(3):
+    for c in range(3):
+        val = GOAL_STATE[r][c]
+        if val != 0:
+            GOAL_POS[val] = (r, c)
+
+
+def manhattan_distance(state):
+    """Calculates the sum of Manhattan distances of tiles from their goal positions."""
+    dist = 0
+    for r in range(3):
+        for c in range(3):
+            val = state[r][c]
+            if val != 0:
+                goal_r, goal_c = GOAL_POS[val]
+                dist += abs(r - goal_r) + abs(c - goal_c)
+    return dist
+
+
+def get_blank_position(state):
+    """Finds the (row, col) coordinates of the blank tile (0)."""
+    for r in range(3):
+        for c in range(3):
+            if state[r][c] == 0:
+                return r, c
+
+
+def get_neighbors(state):
+    """Generates valid next states by moving the blank tile Up, Down, Left, or Right."""
+    r, c = get_blank_position(state)
+    neighbors = []
+    
+    # Possible moves: (row_delta, col_delta, move_name)
+    moves = [(-1, 0, "UP"), (1, 0, "DOWN"), (0, -1, "LEFT"), (0, 1, "RIGHT")]
+    
+    for dr, dc, move_name in moves:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < 3 and 0 <= nc < 3:
+            # Convert tuple of tuples to a mutable list of lists
+            new_board = [list(row) for row in state]
+            # Swap blank tile with target neighbor
+            new_board[r][c], new_board[nr][nc] = new_board[nr][nc], new_board[r][c]
+            # Convert back to an immutable tuple of tuples (hashable for sets/dicts)
+            neighbors.append((tuple(tuple(row) for row in new_board), move_name))
+            
+    return neighbors
+
+
+def is_solvable(state):
+    """
+    Checks if a given 8-puzzle configuration is solvable.
+    An 8-puzzle is solvable if and only if the number of inversions is even.
+    """
+    flat = [tile for row in state for tile in row if tile != 0]
+    inversions = 0
+    for i in range(len(flat)):
+        for j in range(i + 1, len(flat)):
+            if flat[i] > flat[j]:
+                inversions += 1
+    return inversions % 2 == 0
+
+
+def solve_8_puzzle(start_state):
+    """Finds the optimal path from start_state to GOAL_STATE using A* Search."""
+    if not is_solvable(start_state):
+        return None  # Unsolvable state
+
+    # Priority Queue stores tuples: (f_score, g_score, state, path)
+    # f_score = g_score + h_score
+    initial_h = manhattan_distance(start_state)
+    open_heap = [(initial_h, 0, start_state, [])]
+    
+    # Track the lowest g_score (cost from start) for each visited state
+    g_costs = {start_state: 0}
+
+    while open_heap:
+        f, g, current_state, path = heapq.heappop(open_heap)
+
+        if current_state == GOAL_STATE:
+            return path + [(current_state, "GOAL")]
+
+        # Skip state if a shorter path to it has already been explored
+        if g > g_costs.get(current_state, float('inf')):
+            continue
+
+        for next_state, move_name in get_neighbors(current_state):
+            tentative_g = g + 1
+            if tentative_g < g_costs.get(next_state, float('inf')):
+                g_costs[next_state] = tentative_g
+                h = manhattan_distance(next_state)
+                heapq.heappush(
+                    open_heap,
+                    (tentative_g + h, tentative_g, next_state, path + [(current_state, move_name)])
+                )
+
+    return None
+
+
+def print_board(state):
+    for row in state:
+        print(" ".join(str(val) if val != 0 else "_" for val in row))
+    print()
+
+
+# ---------------- Example Usage ----------------
+if __name__ == "__main__":
+    initial_puzzle = (
+        (1, 2, 3),
+        (0, 4, 6),
+        (7, 5, 8)
+    )
+
+    print("Initial State:")
+    print_board(initial_puzzle)
+
+    solution = solve_8_puzzle(initial_puzzle)
+
+    if solution is None:
+        print("This puzzle configuration is not solvable.")
+    else:
+        print(f"Optimal solution found in {len(solution) - 1} moves:\n")
+        for step, (state, move) in enumerate(solution):
+            if step == 0:
+                print("Step 0: Start")
+            else:
+                print(f"Step {step}: Move {move}")
+            print_board(state)
