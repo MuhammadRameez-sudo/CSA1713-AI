@@ -1,0 +1,22 @@
+import itertools
+
+def solve(w1, w2, res):
+    letters = list(set(w1 + w2 + res))
+    if len(letters) > 10: return None
+    firsts = {w1[0], w2[0], res[0]}
+    
+    for perm in itertools.permutations(range(10), len(letters)):
+        m = dict(zip(letters, perm))
+        if any(m[ch] == 0 for ch in firsts): continue
+        
+        n1 = int("".join(str(m[c]) for c in w1))
+        n2 = int("".join(str(m[c]) for c in w2))
+        nr = int("".join(str(m[c]) for c in res))
+        
+        if n1 + n2 == nr:
+            return m, n1, n2, nr
+    return None
+
+mapping, n1, n2, nr = solve("SEND", "MORE", "MONEY")
+print(f"Mapping: {mapping}")
+print(f"{n1} + {n2} = {nr}")
