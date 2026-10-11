@@ -1,0 +1,51 @@
+from collections import deque
+
+
+def is_valid(state):
+    m_left, c_left, _ = state
+    m_right, c_right = 3 - m_left, 3 - c_left
+
+    if not (0 <= m_left <= 3 and 0 <= c_left <= 3):
+        return False
+    if (m_left > 0 and m_left < c_left) or (
+        m_right > 0 and m_right < c_right
+    ):
+        return False
+    return True
+
+
+def solve():
+    start = (3, 3, 0)
+    goal = (0, 0, 1)
+    moves = [(1, 0), (2, 0), (0, 1), (0, 2), (1, 1)]
+
+    queue = deque([[start]])
+    visited = {start}
+
+    while queue:
+        path = queue.popleft()
+        curr_m, curr_c, boat = path[-1]
+
+        if (curr_m, curr_c, boat) == goal:
+            return path
+
+        for dm, dc in moves:
+            if boat == 0:  # Moving Left -> Right
+                nxt = (curr_m - dm, curr_c - dc, 1)
+            else:  # Moving Right -> Left
+                nxt = (curr_m + dm, curr_c + dc, 0)
+
+            if is_valid(nxt) and nxt not in visited:
+                visited.add(nxt)
+                queue.append(path + [nxt])
+
+    return None
+
+
+solution = solve()
+print("Step-by-step solution (M_left, C_left, Boat):")
+for step, state in enumerate(solution):
+    bank = "Left" if state[2] == 0 else "Right"
+    print(
+        f"Step {step}: M_left={state[0]}, C_left={state[1]}, Boat={bank}"
+    )
