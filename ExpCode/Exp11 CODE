@@ -1,0 +1,71 @@
+# Map Coloring using CSP (Backtracking Search)
+
+def is_consistent(region, color, assignment, neighbors):
+    """
+    Checks whether assigning 'color' to 'region' is valid
+    based on the colors of neighboring regions.
+    """
+    for neighbor in neighbors.get(region, []):
+        if neighbor in assignment and assignment[neighbor] == color:
+            return False
+    return True
+
+
+def backtrack(assignment, variables, colors, neighbors):
+    """
+    Recursive backtracking algorithm to assign colors to all regions.
+    """
+    # Base Case: All variables are assigned
+    if len(assignment) == len(variables):
+        return assignment
+
+    # Select an unassigned variable
+    unassigned = [v for v in variables if v not in assignment]
+    first_region = unassigned[0]
+
+    # Try assigning each color from the domain
+    for color in colors:
+        if is_consistent(first_region, color, assignment, neighbors):
+            assignment[first_region] = color
+
+            result = backtrack(assignment, variables, colors, neighbors)
+            if result is not None:
+                return result
+
+            # Backtrack
+            del assignment[first_region]
+
+    return None
+
+
+def solve_map_coloring():
+    # 1. Variables (Regions of Australia)
+    variables = ['WA', 'NT', 'SA', 'Q', 'NSW', 'V', 'T']
+
+    # 2. Domain (Available Colors)
+    colors = ['Red', 'Green', 'Blue']
+
+    # 3. Constraints (Adjacency / Graph Representation)
+    neighbors = {
+        'WA': ['NT', 'SA'],
+        'NT': ['WA', 'SA', 'Q'],
+        'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
+        'Q': ['NT', 'SA', 'NSW'],
+        'NSW': ['Q', 'SA', 'V'],
+        'V': ['SA', 'NSW'],
+        'T': []  # Tasmania has no land borders
+    }
+
+    assignment = {}
+    solution = backtrack(assignment, variables, colors, neighbors)
+    return solution
+
+
+if __name__ == "__main__":
+    solution = solve_map_coloring()
+    if solution:
+        print("--- Map Coloring Solution Found ---")
+        for region, color in sorted(solution.items()):
+            print(f"{region:5} -> {color}")
+    else:
+        print("No valid coloring found.")
