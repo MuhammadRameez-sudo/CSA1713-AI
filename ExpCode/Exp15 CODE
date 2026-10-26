@@ -1,0 +1,86 @@
+import math
+
+# Alpha-Beta Pruning Implementation
+def alpha_beta_pruning(depth, node_index, is_maximizing, values, alpha, beta, target_depth):
+    # Base case: target depth reached (leaf node)
+    if depth == target_depth:
+        return values[node_index]
+
+    if is_maximizing:
+        best = -math.inf
+
+        # Recur for left and right children (branching factor = 2)
+        for i in range(2):
+            val = alpha_beta_pruning(
+                depth + 1,
+                node_index * 2 + i,
+                False,
+                values,
+                alpha,
+                beta,
+                target_depth
+            )
+            best = max(best, val)
+            alpha = max(alpha, best)
+
+            # Alpha-Beta Pruning check
+            if beta <= alpha:
+                print(f"Pruning at Maximizer: depth={depth}, node_index={node_index * 2 + i}, alpha={alpha}, beta={beta}")
+                break
+
+        return best
+    else:
+        best = math.inf
+
+        # Recur for left and right children (branching factor = 2)
+        for i in range(2):
+            val = alpha_beta_pruning(
+                depth + 1,
+                node_index * 2 + i,
+                True,
+                values,
+                alpha,
+                beta,
+                target_depth
+            )
+            best = min(best, val)
+            beta = min(beta, best)
+
+            # Alpha-Beta Pruning check
+            if beta <= alpha:
+                print(f"Pruning at Minimizer: depth={depth}, node_index={node_index * 2 + i}, alpha={alpha}, beta={beta}")
+                break
+
+        return best
+
+
+if __name__ == "__main__":
+    # Terminal leaf values for a complete binary game tree (height = 3, 2^3 = 8 leaves)
+    # Tree representation:
+    #                 Root (MAX)
+    #             /                \
+    #          MIN                  MIN
+    #        /     \              /     \
+    #      MAX     MAX          MAX     MAX
+    #     /   \   /   \        /   \   /   \
+    #    3     5 6     9      1     2 0    -1
+    leaf_values = [3, 5, 6, 9, 1, 2, 0, -1]
+    tree_depth = int(math.log2(len(leaf_values)))
+
+    initial_alpha = -math.inf
+    initial_beta = math.inf
+
+    print("Leaf Node Values:", leaf_values)
+    print("--- Pruning Events ---")
+    optimal_value = alpha_beta_pruning(
+        depth=0,
+        node_index=0,
+        is_maximizing=True,
+        values=leaf_values,
+        alpha=initial_alpha,
+        beta=initial_beta,
+        target_depth=tree_depth
+    )
+
+    print("----------------------")
+    print(f"The optimal value determined for the root player is: {optimal_value}")
