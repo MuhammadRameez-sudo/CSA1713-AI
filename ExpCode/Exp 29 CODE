@@ -1,0 +1,39 @@
+% 14_backward_chaining.pl
+% Write a Prolog Program for backward Chaining. Incorporate required queries.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 14: Backward Chaining ==='), nl,
+    write('Knowledge base:'), nl,
+    write('  parent(tom, bob). parent(bob, ann). parent(bob, pat).'), nl,
+    write('  parent(pat, jim).'), nl,
+    write('  ancestor(X,Y) :- parent(X,Y).'), nl,
+    write('  ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y).'), nl, nl,
+    write('Query (backward chaining): Is tom an ancestor of jim?'), nl,
+    (ancestor(tom, jim) ->
+        write('  Yes, tom is an ancestor of jim.'), nl
+    ;
+        write('  No.'), nl
+    ),
+    nl,
+    write('Query: Who are the ancestors of jim?'), nl,
+    ancestor(A, jim),
+    write('  '), write(A), nl, fail.
+run :-
+    write('Query: Descendants of bob:'), nl,
+    ancestor(bob, D),
+    write('  '), write(D), nl, fail.
+run :-
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Facts
+parent(tom, bob).
+parent(bob, ann).
+parent(bob, pat).
+parent(pat, jim).
+
+% Backward chaining rules (Prolog's natural strategy)
+ancestor(X, Y) :- parent(X, Y).
+ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
