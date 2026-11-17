@@ -1,0 +1,52 @@
+% 11_best_first_search.pl
+% Write a Prolog Program to implement Best First Search algorithm
+
+:- initialization(run).
+
+run :-
+    write('=== Program 11: Best First Search ==='), nl,
+    write('Graph with heuristic values:'), nl,
+    write('  S(h=7) -> A(h=5), B(h=4)'), nl,
+    write('  A(h=5) -> C(h=3), D(h=6)'), nl,
+    write('  B(h=4) -> E(h=2), F(h=5)'), nl,
+    write('  C(h=3) -> G(h=0)  [Goal]'), nl,
+    write('  E(h=2) -> G(h=0)  [Goal]'), nl, nl,
+    write('Best First Search path from S to G:'), nl,
+    best_first(s, g, Path),
+    write('  Path found: '), write(Path), nl,
+    write('Program completed successfully.'), nl,
+    halt.
+run :-
+    write('No path found.'), nl,
+    halt.
+
+% Graph edges
+edge(s, a). edge(s, b).
+edge(a, c). edge(a, d).
+edge(b, e). edge(b, f).
+edge(c, g). edge(e, g).
+
+% Heuristic values (estimated cost to goal)
+h(s, 7). h(a, 5). h(b, 4).
+h(c, 3). h(d, 6). h(e, 2).
+h(f, 5). h(g, 0).
+
+% Best-first search using heuristic to choose next node
+best_first(Start, Goal, Path) :-
+    bfs([[Start]], Goal, RevPath),
+    reverse(RevPath, Path).
+
+bfs([[Goal|Rest]|_], Goal, [Goal|Rest]) :- !.
+bfs([Path|Queue], Goal, Result) :-
+    Path = [Current|_],
+    findall([Next|Path],
+            (edge(Current, Next), \+ member(Next, Path)),
+            Children),
+    % Sort children by heuristic (lowest h first)
+    predsort(compare_h, Children, Sorted),
+    append(Queue, Sorted, NewQueue),
+    bfs(NewQueue, Goal, Result).
+
+compare_h(Order, [N1|_], [N2|_]) :-
+    h(N1, H1), h(N2, H2),
+    (H1 < H2 -> Order = < ; (H1 > H2 -> Order = > ; Orde
