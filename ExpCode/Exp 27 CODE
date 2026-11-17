@@ -1,0 +1,61 @@
+% 12_medical_diagnosis.pl
+% Write the prolog program for Medical Diagnosis
+
+:- initialization(run).
+
+run :-
+    write('=== Program 12: Medical Diagnosis Expert System ==='), nl, nl,
+    diagnose(patient1),
+    diagnose(patient2),
+    diagnose(patient3),
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Patient symptoms
+symptom(patient1, fever).
+symptom(patient1, cough).
+symptom(patient1, body_ache).
+
+symptom(patient2, fever).
+symptom(patient2, rash).
+symptom(patient2, headache).
+
+symptom(patient3, sore_throat).
+symptom(patient3, cough).
+symptom(patient3, runny_nose).
+
+% Diagnosis rules
+disease(flu) :-
+    symptom(_, fever),
+    symptom(_, cough),
+    symptom(_, body_ache).
+
+disease(measles) :-
+    symptom(_, fever),
+    symptom(_, rash),
+    symptom(_, headache).
+
+disease(cold) :-
+    symptom(_, sore_throat),
+    symptom(_, cough),
+    symptom(_, runny_nose).
+
+% Diagnosis per patient
+has_disease(P, flu) :-
+    symptom(P, fever), symptom(P, cough), symptom(P, body_ache).
+has_disease(P, measles) :-
+    symptom(P, fever), symptom(P, rash), symptom(P, headache).
+has_disease(P, common_cold) :-
+    symptom(P, sore_throat), symptom(P, cough), symptom(P, runny_nose).
+
+diagnose(P) :-
+    write('Patient: '), write(P), nl,
+    write('  Symptoms: '),
+    findall(S, symptom(P, S), Symptoms),
+    write(Symptoms), nl,
+    (has_disease(P, D) ->
+        write('  Diagnosis: '), write(D), nl
+    ;
+        write('  Diagnosis: Unknown / Further tests needed'), nl
+    ),
+    nl.
