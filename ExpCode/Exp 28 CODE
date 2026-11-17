@@ -1,0 +1,49 @@
+% 13_forward_chaining.pl
+% Write a Prolog Program for forward Chaining. Incorporate required queries.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 13: Forward Chaining ==='), nl,
+    write('Initial facts:'), nl,
+    write('  fact(a). fact(b).'), nl,
+    write('Rules:'), nl,
+    write('  c :- a, b.'), nl,
+    write('  d :- c.'), nl,
+    write('  e :- d, a.'), nl, nl,
+    write('Applying forward chaining to derive new facts...'), nl, nl,
+    forward_chain,
+    write('All derived facts:'), nl,
+    derived(F),
+    write('  '), write(F), nl, fail.
+run :-
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Initial facts
+fact(a).
+fact(b).
+
+% Rules (as clauses that can fire)
+rule(c) :- fact(a), fact(b).
+rule(d) :- fact(c).
+rule(e) :- fact(d), fact(a).
+
+% Simple forward chaining: keep adding conclusions until no more
+:- dynamic derived/1.
+:- dynamic fact/1.
+
+forward_chain :-
+    retractall(derived(_)),
+    assertz(derived(a)),
+    assertz(derived(b)),
+    derive_all.
+
+derive_all :-
+    rule(New),
+    \+ derived(New),
+    assertz(derived(New)),
+    assertz(fact(New)),
+    write('  Derived: '), write(New), nl,
+    derive_all.
+derive_all.
