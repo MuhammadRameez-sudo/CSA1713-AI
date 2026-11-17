@@ -1,0 +1,22 @@
+ 05_towers_of_hanoi.pl
+% Write a Prolog Program to implement Towers of Hanoi.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 05: Towers of Hanoi ==='), nl,
+    write('Solving for 3 disks (from A to C using B as auxiliary):'), nl, nl,
+    hanoi(3, 'A', 'C', 'B'),
+    nl,
+    write('Program completed successfully.'), nl,
+    halt.
+
+hanoi(1, From, To, _) :-
+    write('  Move disk 1 from '), write(From), write(' to '), write(To), nl.
+hanoi(N, From, To, Aux) :-
+    N > 1,
+    N1 is N - 1,
+    hanoi(N1, From, Aux, To),
+    write('  Move disk '), write(N), write(' from '), write(From),
+    write(' to '), write(To), nl,
+    hanoi(N1, Aux, To, From).
