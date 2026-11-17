@@ -1,0 +1,26 @@
+% 02_name_dob_db.pl
+% Write a Prolog Program for A DB WITH NAME, DOB.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 02: Database with Name and DOB ==='), nl,
+    write('All persons in the database:'), nl,
+    person(Name, DOB),
+    write('  Name: '), write(Name), write(', DOB: '), write(DOB), nl,
+    fail.
+run :-
+    write('Query: Who was born on 15-08-1995?'), nl,
+    person(N, '15-08-1995'),
+    write('  Found: '), write(N), nl, fail.
+run :-
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Database facts: person(Name, DateOfBirth)
+person('Rahul Sharma', '12-03-1998').
+person('Priya Patel', '15-08-1995').
+person('Amit Kumar', '22-11-2000').
+person('Sneha Reddy', '05-07-1997').
+person('Vikram Singh', '15-08-1995').
+person('Ananya Iyer', '30-01-1999').
