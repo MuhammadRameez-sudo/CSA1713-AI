@@ -1,0 +1,48 @@
+ 07_family_tree.pl
+% Write the prolog program to implement family tree.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 07: Family Tree ==='), nl,
+    write('Parents of Charles:'), nl,
+    parent(P, charles),
+    write('  '), write(P), nl, fail.
+run :-
+    write('Children of Elizabeth:'), nl,
+    parent(elizabeth, C),
+    write('  '), write(C), nl, fail.
+run :-
+    write('Grandparents of William:'), nl,
+    grandparent(GP, william),
+    write('  '), write(GP), nl, fail.
+run :-
+    write('Siblings of Anne:'), nl,
+    sibling(anne, S),
+    write('  '), write(S), nl, fail.
+run :-
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Facts
+parent(george, elizabeth).
+parent(george, margaret).
+parent(mary, elizabeth).
+parent(mary, margaret).
+parent(elizabeth, charles).
+parent(elizabeth, anne).
+parent(philip, charles).
+parent(philip, anne).
+parent(charles, william).
+parent(charles, harry).
+parent(diana, william).
+parent(diana, harry).
+
+male(george). male(philip). male(charles). male(william). male(harry).
+female(mary). female(elizabeth). female(margaret). female(anne). female(diana).
+
+% Rules
+father(F, C) :- parent(F, C), male(F).
+mother(M, C) :- parent(M, C), female(M).
+grandparent(GP, C) :- parent(GP, P), parent(P, C).
+sibling(X, Y) :- parent(P, X), parent(P, Y), X \= Y.
