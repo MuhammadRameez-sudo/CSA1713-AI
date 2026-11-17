@@ -1,0 +1,30 @@
+ 08_dieting_system.pl
+% Write a Prolog Program to suggest Dieting System based on Disease.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 08: Diet Suggestion based on Disease ==='), nl, nl,
+    suggest_diet(diabetes),
+    suggest_diet(hypertension),
+    suggest_diet(obesity),
+    suggest_diet(anemia),
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Knowledge base
+disease(diabetes).
+disease(hypertension).
+disease(obesity).
+disease(anemia).
+
+% Diet rules
+diet(diabetes, 'Low sugar, high fiber, whole grains, vegetables, lean protein').
+diet(hypertension, 'Low sodium, DASH diet, fruits, vegetables, low-fat dairy').
+diet(obesity, 'Calorie deficit, high protein, vegetables, avoid processed food').
+diet(anemia, 'Iron-rich food: spinach, lentils, red meat, vitamin C foods').
+
+suggest_diet(D) :-
+    write('Disease: '), write(D), nl,
+    diet(D, Suggestion),
+    write('  Recommended diet: '), write(Suggestion), nl, nl.
