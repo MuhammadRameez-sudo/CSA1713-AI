@@ -1,0 +1,41 @@
+% 06_bird_can_fly.pl
+% Write a Prolog Program to print particular bird can fly or not.
+% Incorporate required queries.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 06: Can the Bird Fly? ==='), nl,
+    write('Checking flight capability of various birds:'), nl, nl,
+    check_bird(sparrow),
+    check_bird(eagle),
+    check_bird(penguin),
+    check_bird(ostrich),
+    check_bird(parrot),
+    check_bird(kiwi),
+    nl,
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Facts
+bird(sparrow).
+bird(eagle).
+bird(penguin).
+bird(ostrich).
+bird(parrot).
+bird(kiwi).
+
+can_fly(sparrow).
+can_fly(eagle).
+can_fly(parrot).
+
+% Rule
+flies(Bird) :- bird(Bird), can_fly(Bird).
+cannot_fly(Bird) :- bird(Bird), \+ can_fly(Bird).
+
+check_bird(B) :-
+    (flies(B) ->
+        write('  '), write(B), write(' can fly.'), nl
+    ;
+        write('  '), write(B), write(' cannot fly.'), nl
+    ).
