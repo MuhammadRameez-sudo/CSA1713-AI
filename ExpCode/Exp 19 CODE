@@ -1,0 +1,34 @@
+% 03_student_teacher_sub.pl
+% Write a Prolog Program for STUDENT-TEACHER-SUB-CODE.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 03: Student - Teacher - Subject Code ==='), nl,
+    write('All student-teacher-subject records:'), nl,
+    teaches(Teacher, Subject, Code),
+    student(Student, Subject),
+    write('  Student: '), write(Student),
+    write(', Subject: '), write(Subject),
+    write(' ('), write(Code), write('), Teacher: '), write(Teacher), nl,
+    fail.
+run :-
+    write('Query: Who teaches CS101?'), nl,
+    teaches(T, _, 'CS101'),
+    write('  Teacher: '), write(T), nl, fail.
+run :-
+    write('Program completed successfully.'), nl,
+    halt.
+
+% Facts
+teaches('Dr. Mehta', 'Programming', 'CS101').
+teaches('Dr. Sharma', 'Database', 'CS201').
+teaches('Prof. Khan', 'AI', 'CS301').
+teaches('Dr. Patel', 'Networks', 'CS202').
+
+student('Aarav', 'Programming').
+student('Diya', 'Programming').
+student('Kabir', 'Database').
+student('Isha', 'AI').
+student('Rohan', 'Networks').
+student('Neha', 'AI').
