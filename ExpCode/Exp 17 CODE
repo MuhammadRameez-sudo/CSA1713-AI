@@ -1,0 +1,22 @@
+% 01_sum_1_to_n.pl
+% Write a Prolog Program to Sum the Integers from 1 to n.
+
+:- initialization(run).
+
+run :-
+    write('=== Program 01: Sum of Integers from 1 to n ==='), nl,
+    sum_to_n(5, S5),
+    write('Sum from 1 to 5  = '), write(S5), nl,
+    sum_to_n(10, S10),
+    write('Sum from 1 to 10 = '), write(S10), nl,
+    sum_to_n(100, S100),
+    write('Sum from 1 to 100 = '), write(S100), nl,
+    write('Program completed successfully.'), nl,
+    halt.
+
+sum_to_n(0, 0) :- !.
+sum_to_n(N, Sum) :-
+    N > 0,
+    N1 is N - 1,
+    sum_to_n(N1, S1),
+    Sum is S1 + N.
